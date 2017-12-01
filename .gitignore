@@ -1,2 +1,2 @@
 .env
-app/target/debug
+app/target
