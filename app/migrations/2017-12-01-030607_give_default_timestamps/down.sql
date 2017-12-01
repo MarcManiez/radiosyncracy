@@ -1,0 +1,15 @@
+ALTER TABLE users
+  ALTER COLUMN created_at DROP DEFAULT,
+  ALTER COLUMN updated_at SET NOT NULL;
+
+ALTER TABLE tracks
+  ALTER COLUMN created_at DROP DEFAULT,
+  ALTER COLUMN updated_at SET NOT NULL;
+
+ALTER TABLE radios
+  ALTER COLUMN created_at DROP DEFAULT,
+  ALTER COLUMN updated_at SET NOT NULL;
+
+ALTER TABLE radio_tracks
+  ALTER COLUMN created_at DROP DEFAULT,
+  ALTER COLUMN updated_at SET NOT NULL;
