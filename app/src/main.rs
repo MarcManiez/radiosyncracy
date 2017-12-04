@@ -4,7 +4,9 @@
 extern crate dotenv;
 extern crate iron;
 
+pub mod models;
 pub mod schema;
+use ::models::user::User;
 use iron::prelude::*;
 use iron::status;
 
