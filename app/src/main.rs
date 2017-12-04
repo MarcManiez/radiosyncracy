@@ -6,6 +6,7 @@ extern crate iron;
 
 pub mod models;
 pub mod schema;
+mod connection;
 use ::models::user::User;
 use iron::prelude::*;
 use iron::status;
