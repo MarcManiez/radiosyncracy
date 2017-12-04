@@ -1,5 +1,10 @@
+#![recursion_limit="128"]
+#[macro_use] extern crate diesel;
+#[macro_use] extern crate diesel_infer_schema;
+extern crate dotenv;
 extern crate iron;
 
+pub mod schema;
 use iron::prelude::*;
 use iron::status;
 
