@@ -1,12 +1,19 @@
+use diesel::prelude::*;
 use iron::prelude::*;
 use iron::status;
+use serde_json;
 
-use ::models::user;
+use std::ops::Deref;
+
+use ::models::user::User;
+use ::schema::users::dsl::*;
 use ::connection;
 
 pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
-    Ok(Response::with((status::Ok, "A bunch of users here at some point")))
-    // let pool = connection::establish_connection_pool();
-    // let connection = pool.get().expect("Failed to fetch a connection.");
-    // let all_users = users.load::<User>(connection.deref()).expect("Error loading users.");
+    let pool = connection::establish_connection_pool();
+    let database_connection = pool.get().expect("Failed to fetch a connection.");
+    let all_users = users.load::<User>(database_connection.deref()).expect("Error loading users.");
+
+    let serialized_users = serde_json::to_string(&all_users).expect("Failed to serialize users");
+    Ok(Response::with((status::Ok, serialized_users)))
 }
