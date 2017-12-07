@@ -1,8 +1,7 @@
 extern crate chrono;
 use self::chrono::NaiveDateTime;
 
-#[derive(Queryable)]
-#[derive(Debug)]
+#[derive(Debug, Deserialize, Queryable, Serialize)]
 pub struct User {
     pub id: i32,
     pub username: String,
