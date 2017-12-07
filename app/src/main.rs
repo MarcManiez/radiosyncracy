@@ -1,28 +1,25 @@
 #![recursion_limit="128"]
 #[macro_use] extern crate diesel;
 #[macro_use] extern crate diesel_infer_schema;
+#[macro_use] extern crate serde_derive;
 extern crate dotenv;
 extern crate iron;
+extern crate serde;
+extern crate serde_json;
 
 pub mod models;
 pub mod schema;
 mod api_routes;
 mod connection;
 mod controllers;
-
-use std::ops::Deref;
-
-use ::models::user::User;
-use ::schema::users::dsl::*;
-use diesel::prelude::*;
 use iron::prelude::*;
 
 fn main() {
-    let pool = connection::establish_connection_pool();
-    let connection = pool.get().expect("Failed to fetch a connection.");
-    let all_users = users.load::<User>(connection.deref()).expect("Error loading users.");
+    // let pool = connection::establish_connection_pool();
+    // let connection = pool.get().expect("Failed to fetch a connection.");
+    // let all_users = users.load::<User>(connection.deref()).expect("Error loading users.");
 
-    println!("the user: {:?}", all_users[0]);
+    // println!("the user: {:?}", all_users[0]);
 
     let routes = api_routes::get_routes();
 
