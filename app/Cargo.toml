@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["marcmaniez <marc.maniez@gmail.com>"]
 
 [dependencies]
-chrono =  "*"
+chrono =  { version = "*", features = ["serde"] }
 diesel = { version = "0.99.0", features = ["postgres", "chrono"] }
 diesel_codegen = { version = "0.16.0", features = ["postgres"] }
 diesel_infer_schema = { version = "0.99.0", features = ["postgres"] }
@@ -13,3 +13,6 @@ iron = "*"
 r2d2 = "*"
 r2d2-diesel = "*"
 router = "*"
+serde = "*"
+serde_derive = "*"
+serde_json = "*"
