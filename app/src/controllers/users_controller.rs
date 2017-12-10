@@ -2,6 +2,7 @@ use diesel::prelude::*;
 use iron::prelude::*;
 use iron::status;
 use serde_json;
+use urlencoded::UrlEncodedBody;
 use urlencoded::UrlEncodedQuery;
 
 use std::ops::Deref;
@@ -23,4 +24,12 @@ pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
 
     let serialized_users = serde_json::to_string(&all_users).expect("Failed to serialize users");
     Ok(Response::with((status::Ok, serialized_users)))
+}
+
+pub fn create(req: &mut Request) -> IronResult<Response> {
+    let query_params = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
+    let new_user = User::new("eric", "eric@gmail.com", "imprettygreat");
+    new_user.save();
+
+    Ok(Response::with((status::Ok, "Just testing")))
 }
