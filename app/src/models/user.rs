@@ -27,3 +27,13 @@ pub struct NewUser<'a> {
     pub password: &'a str,
 }
 
+impl User {
+    pub fn new<'a>(username: &'a str, email: &'a str, password: &'a str) -> NewUser<'a> {
+        NewUser {
+            username,
+            email,
+            password,
+        }
+    }
+}
+
