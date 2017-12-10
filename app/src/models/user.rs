@@ -1,15 +1,15 @@
 extern crate chrono;
+
+use diesel;
+use diesel::LoadDsl;
 use self::chrono::NaiveDateTime;
 
+use std::ops::Deref;
+
+use ::connection;
+use ::schema::users;
+
 #[derive(Debug, Deserialize, Queryable, Serialize)]
-pub struct User {
-    pub id: i32,
-    pub username: String,
-    pub email: String,
-    pub created_at: NaiveDateTime,
-    pub updated_at: Option<NaiveDateTime>,
-    pub password: String,
-}
 pub struct User {
     pub id: i32,
     pub username: String,
@@ -37,3 +37,14 @@ impl User {
     }
 }
 
+impl<'a> NewUser<'a> {
+    pub fn save(&self) -> User {
+        let pool = connection::establish_connection_pool();
+        let database_connection = pool.get().expect("Failed to fetch a connection.");
+
+        diesel::insert_into(users::table)
+            .values(self)
+            .get_result(database_connection.deref())
+            .expect("Failed to insert user.")
+    }
+}
