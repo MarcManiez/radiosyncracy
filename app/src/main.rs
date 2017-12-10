@@ -6,6 +6,7 @@ extern crate dotenv;
 extern crate iron;
 extern crate serde;
 extern crate serde_json;
+extern crate urlencoded;
 
 pub mod models;
 pub mod schema;
