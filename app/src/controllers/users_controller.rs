@@ -41,7 +41,9 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let user_password = &query_params.get("password").unwrap()[0];
 
     let new_user = User::new(user_name, user_email, user_password);
-    new_user.save();
 
-    Ok(Response::with((status::Ok, "Just testing")))
+    match new_user.save() {
+        Ok(saved_user) => Ok(Response::with((status::Created, serde_json::to_string(&saved_user).unwrap()))),
+        Err(_) => Ok(Response::with((status::InternalServerError, "Failed to insert user in database."))),
+    }
 }

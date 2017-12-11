@@ -38,13 +38,12 @@ impl User {
 }
 
 impl<'a> NewUser<'a> {
-    pub fn save(&self) -> User {
+    pub fn save(&self) -> Result<User, diesel::result::Error> {
         let pool = connection::establish_connection_pool();
         let database_connection = pool.get().expect("Failed to fetch a connection.");
 
         diesel::insert_into(users::table)
             .values(self)
             .get_result(database_connection.deref())
-            .expect("Failed to insert user.")
     }
 }
