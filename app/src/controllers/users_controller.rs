@@ -28,7 +28,13 @@ pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
     let query_params = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
-    let new_user = User::new("eric", "eric@gmail.com", "imprettygreat");
+    let required_params = ["username", "email", "password"];
+
+    for &param in &required_params {
+        if let None = query_params.get(param) {
+            return Ok(Response::with((status::UnprocessableEntity, format!("Required parameter '{}' was absent", param))));
+        }
+    }
     new_user.save();
 
     Ok(Response::with((status::Ok, "Just testing")))
