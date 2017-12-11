@@ -1,3 +1,4 @@
+use bcrypt::{DEFAULT_COST, hash};
 use diesel::prelude::*;
 use iron::prelude::*;
 use iron::status;
@@ -40,8 +41,9 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let user_name = &query_params.get("username").unwrap()[0];
     let user_email = &query_params.get("email").unwrap()[0];
     let user_password = &query_params.get("password").unwrap()[0];
+    let hashed_password = &hash(user_password, DEFAULT_COST).expect("Failed to encrypt password.");
 
-    let new_user = User::new(user_name, user_email, user_password);
+    let new_user = User::new(user_name, user_email, hashed_password);
 
     match new_user.save() {
         Ok(saved_user) => Ok(Response::with((status::Created, users::create::render(saved_user)))),
