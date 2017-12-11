@@ -10,6 +10,7 @@ use std::ops::Deref;
 use ::models::user::User;
 use ::schema::users::dsl::*;
 use ::connection;
+use ::views::api::users;
 
 pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
     let query_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
@@ -43,7 +44,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let new_user = User::new(user_name, user_email, user_password);
 
     match new_user.save() {
-        Ok(saved_user) => Ok(Response::with((status::Created, serde_json::to_string(&saved_user).unwrap()))),
+        Ok(saved_user) => Ok(Response::with((status::Created, users::create::render(saved_user)))),
         Err(_) => Ok(Response::with((status::InternalServerError, "Failed to insert user in database."))),
     }
 }
