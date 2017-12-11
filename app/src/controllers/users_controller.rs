@@ -35,6 +35,12 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
             return Ok(Response::with((status::UnprocessableEntity, format!("Required parameter '{}' was absent", param))));
         }
     }
+
+    let user_name = &query_params.get("username").unwrap()[0];
+    let user_email = &query_params.get("email").unwrap()[0];
+    let user_password = &query_params.get("password").unwrap()[0];
+
+    let new_user = User::new(user_name, user_email, user_password);
     new_user.save();
 
     Ok(Response::with((status::Ok, "Just testing")))
