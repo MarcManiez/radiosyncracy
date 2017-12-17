@@ -1,7 +1,8 @@
 extern crate chrono;
 
-use bcrypt::{DEFAULT_COST, hash};
+use bcrypt::{DEFAULT_COST, hash, verify};
 use diesel;
+use diesel::prelude::*;
 use diesel::LoadDsl;
 use rand::{thread_rng, Rng};
 use self::chrono::NaiveDateTime;
@@ -31,6 +32,11 @@ pub struct NewUser<'a> {
     pub password_salt: String,
 }
 
+pub enum Identifier<'a> {
+    Email(&'a str),
+    Username(&'a str),
+}
+
 impl User {
     pub fn new<'a>(username: &'a str, email: &'a str, supplied_password: &'a str) -> NewUser<'a> {
         let password_salt: String = thread_rng().gen_ascii_chars().take(10).collect();
@@ -41,6 +47,28 @@ impl User {
             password,
             password_salt
         }
+    }
+
+    pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, diesel::result::Error> {
+        use ::schema::users::dsl::*;
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+
+        let user = match identifier {
+            Identifier::Email(submitted_email) => {
+                users.filter(email.eq(submitted_email)).first::<User>(database_connection.deref())
+            },
+            Identifier::Username(submitted_username) => {
+                users.filter(username.eq(submitted_username)).first::<User>(database_connection.deref())
+            },
+        };
+
+        if let Ok(ref found_user) = user {
+            let salted_supplied_password = format!("{}{}", found_user.password_salt, supplied_password);
+            if !verify(&salted_supplied_password, &found_user.password).unwrap() {
+                return Err(diesel::result::Error::NotFound)
+            }
+        }
+        user
     }
 
     fn hash_salted_password(supplied_password: &str, password_salt: &str) -> String {
