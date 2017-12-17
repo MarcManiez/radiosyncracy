@@ -8,14 +8,16 @@ use dotenv::dotenv;
 use self::r2d2::{Error, Pool, PooledConnection};
 use self::r2d2_diesel::ConnectionManager;
 
+type Manager = ConnectionManager<PgConnection>;
+
 pub const POOL: ConnectionPool = ConnectionPool { pool: None };
 
 pub struct ConnectionPool {
-    pool: Option<Pool<ConnectionManager<PgConnection>>>
+    pool: Option<Pool<Manager>>
 }
 
 impl ConnectionPool {
-    pub fn get(mut self) -> Result<PooledConnection<ConnectionManager<PgConnection>>, Error> {
+    pub fn get(mut self) -> Result<PooledConnection<Manager>, Error> {
         if let None = self.pool {
             self.instantiate_connection_pool();
         }
