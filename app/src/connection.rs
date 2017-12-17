@@ -27,7 +27,7 @@ impl ConnectionPool {
 
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let manager = ConnectionManager::<PgConnection>::new(database_url);
-        self.pool = Some(r2d2::Pool::builder().build(manager).expect("Failed to create connection pool."))
+        self.pool = Some(r2d2::Pool::builder().max_size(15).build(manager).expect("Failed to create connection pool."))
     }
 }
 
