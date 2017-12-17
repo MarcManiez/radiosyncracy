@@ -9,6 +9,7 @@ use std::ops::Deref;
 
 use ::models::user::User;
 use ::schema::users::dsl::*;
+use super::utils::*;
 use ::connection::POOL;
 use ::views::api::users;
 
@@ -28,12 +29,9 @@ pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
     let query_params = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
-    let required_params = ["username", "email", "password"];
 
-    for &param in &required_params {
-        if let None = query_params.get(param) {
-            return Ok(Response::with((status::UnprocessableEntity, format!("Required parameter '{}' was absent", param))));
-        }
+    if let Some(response) = validate_params(query_params, vec!["username", "email", "password"]) {
+        return Ok(response)
     }
 
     let user_name = &query_params.get("username").unwrap()[0];
