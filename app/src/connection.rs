@@ -17,17 +17,17 @@ pub struct ConnectionPool {
 impl ConnectionPool {
     pub fn get(mut self) -> Result<PooledConnection<ConnectionManager<PgConnection>>, Error> {
         if let None = self.pool {
-            self.pool = Some(ConnectionPool::instantiate_connection_pool());
+            self.instantiate_connection_pool();
         }
-        self.pool.expect("1").clone().get()
+        self.pool.expect("Failed to fetch connection").clone().get()
     }
 
-    fn instantiate_connection_pool() -> Pool<ConnectionManager<PgConnection>> {
+    fn instantiate_connection_pool(&mut self) {
         dotenv().ok();
 
         let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
         let manager = ConnectionManager::<PgConnection>::new(database_url);
-        r2d2::Pool::builder().build(manager).expect("Failed to create connection pool.")
+        self.pool = Some(r2d2::Pool::builder().build(manager).expect("Failed to create connection pool."))
     }
 }
 
