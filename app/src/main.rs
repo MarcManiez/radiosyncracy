@@ -5,6 +5,7 @@
 extern crate bcrypt;
 extern crate cookie;
 extern crate dotenv;
+extern crate hyper;
 extern crate iron;
 extern crate rand;
 extern crate serde;
