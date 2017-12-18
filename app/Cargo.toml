@@ -5,6 +5,7 @@ authors = ["marcmaniez <marc.maniez@gmail.com>"]
 
 [dependencies]
 bcrypt = "*"
+cookie = "*"
 chrono =  { version = "*", features = ["serde"] }
 diesel = { version = "0.99.0", features = ["postgres", "chrono"] }
 diesel_codegen = { version = "0.16.0", features = ["postgres"] }

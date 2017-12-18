@@ -3,6 +3,7 @@
 #[macro_use] extern crate diesel_infer_schema;
 #[macro_use] extern crate serde_derive;
 extern crate bcrypt;
+extern crate cookie;
 extern crate dotenv;
 extern crate iron;
 extern crate rand;
