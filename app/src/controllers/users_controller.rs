@@ -41,7 +41,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let new_user = User::new(user_name, user_email, user_password);
 
     match new_user.save() {
-        Ok(saved_user) => Ok(Response::with((status::Created, users::create::render(saved_user)))),
+        Ok(saved_user) => Ok(Response::with((status::Created, users::create::render(&saved_user)))),
         Err(_) => Ok(Response::with((status::InternalServerError, "Failed to insert user in database."))),
     }
 }
