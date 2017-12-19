@@ -30,7 +30,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         Ok(user) => {
             let mut response = Response::with((status::Ok, create::render(&user)));
             response.headers.set(Cookie(vec![
-                CookiePair::new("user".to_owned(), create::render(&user)).to_string()
+                CookiePair::new("foo".to_owned(), "bar".to_owned()).to_string()
             ]));
             Ok(response)
         },
