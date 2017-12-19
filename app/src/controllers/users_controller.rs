@@ -28,15 +28,15 @@ pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
-    let query_params = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
+    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
 
-    if let Some(response) = require_params(query_params, vec!["username", "email", "password"]) {
+    if let Some(response) = require_params(request_body, vec!["username", "email", "password"]) {
         return Ok(response)
     }
 
-    let user_name = &query_params.get("username").unwrap()[0];
-    let user_email = &query_params.get("email").unwrap()[0];
-    let user_password = &query_params.get("password").unwrap()[0];
+    let user_name = &request_body.get("username").unwrap()[0];
+    let user_email = &request_body.get("email").unwrap()[0];
+    let user_password = &request_body.get("password").unwrap()[0];
 
     let new_user = User::new(user_name, user_email, user_password);
 

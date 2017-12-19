@@ -2,25 +2,25 @@ use cookie::Cookie as CookiePair;
 use hyper::header::Cookie;
 use iron::prelude::*;
 use iron::status;
-use urlencoded::UrlEncodedQuery;
+use urlencoded::UrlEncodedBody;
 
 use ::models::user::{Identifier, User};
 use super::utils::*;
 use ::views::api::sessions::create;
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
-    let query_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
+    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
 
-    if let Some(response) = require_params(query_params, vec!["password"]) {
+    if let Some(response) = require_params(request_body, vec!["password"]) {
         return Ok(response)
     }
-    let supplied_password = &query_params.get("password").unwrap()[0];
+    let supplied_password = &request_body.get("password").unwrap()[0];
 
     let identifier: Identifier;
-    if let Some(username) = query_params.get("username") {
+    if let Some(username) = request_body.get("username") {
         identifier = Identifier::Username(&username[0]);
     } else {
-        match query_params.get("email") {
+        match request_body.get("email") {
             Some(email) => identifier = Identifier::Email(&email[0]),
             None => return Ok(Response::with((status::UnprocessableEntity, format!("Identifier parameter was absent")))),
         }
