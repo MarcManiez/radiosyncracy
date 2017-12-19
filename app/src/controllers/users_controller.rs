@@ -30,7 +30,7 @@ pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
 pub fn create(req: &mut Request) -> IronResult<Response> {
     let query_params = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
 
-    if let Some(response) = validate_params(query_params, vec!["username", "email", "password"]) {
+    if let Some(response) = require_params(query_params, vec!["username", "email", "password"]) {
         return Ok(response)
     }
 
