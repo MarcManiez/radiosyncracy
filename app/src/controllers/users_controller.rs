@@ -13,6 +13,7 @@ use super::utils::*;
 use ::connection::POOL;
 use ::views::api::users;
 
+// first test method we implemented to test reading from the database
 pub fn get_all_users(req: &mut Request) -> IronResult<Response> {
     let query_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
     let email_address = &query_params["email"][0];
