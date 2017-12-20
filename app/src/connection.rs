@@ -21,7 +21,7 @@ impl ConnectionPool {
         if let None = self.pool {
             self.instantiate_connection_pool();
         }
-        self.pool.expect("Failed to fetch connection").clone().get()
+        self.pool.expect("Failed to fetch pool").get()
     }
 
     fn instantiate_connection_pool(&mut self) {
