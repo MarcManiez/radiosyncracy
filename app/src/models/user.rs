@@ -1,11 +1,11 @@
 extern crate chrono;
 
 use bcrypt::{DEFAULT_COST, hash, verify};
+use chrono::NaiveDateTime;
 use diesel;
 use diesel::prelude::*;
 use diesel::LoadDsl;
 use rand::{thread_rng, Rng};
-use self::chrono::NaiveDateTime;
 
 use std::ops::Deref;
 
