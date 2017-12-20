@@ -20,13 +20,13 @@ pub struct Track {
 #[derive(Debug, Insertable)]
 #[table_name="tracks"]
 pub struct NewTrack<'a> {
-    pub length: i32,
+    pub length: Option<i32>,
     pub link: &'a str,
-    pub name: &'a str,
+    pub name: Option<&'a str>,
 }
 
 impl Track {
-    pub fn new<'a>(length: i32, link: &'a str, name: &'a str) -> NewTrack<'a> {
+    pub fn new<'a>(length: Option<i32>, link: &'a str, name: Option<&'a str>) -> NewTrack<'a> {
         NewTrack {
             length,
             link,
