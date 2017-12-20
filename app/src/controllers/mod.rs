@@ -1,4 +1,5 @@
 mod utils;
 
-pub mod users_controller;
 pub mod sessions_controller;
+pub mod tracks_controller;
+pub mod users_controller;
