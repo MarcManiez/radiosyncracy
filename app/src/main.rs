@@ -9,6 +9,7 @@ extern crate dotenv;
 extern crate hyper;
 extern crate iron;
 extern crate rand;
+extern crate regex;
 extern crate serde;
 extern crate serde_json;
 extern crate urlencoded;
