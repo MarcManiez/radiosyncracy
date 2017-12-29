@@ -60,6 +60,15 @@ impl Track {
         }
         None
     }
+
+    pub fn find(id: i32) -> Result<Track, String> {
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+
+        match tracks::table.find(id).get_result(database_connection.deref()) {
+            Ok(track) => Ok(track),
+            Err(error) => Err(format!("Error finding track : {:?}", error))
+        }
+    }
 }
 
 impl<'a> NewTrack<'a> {
