@@ -40,7 +40,7 @@ impl Track {
         }
     }
 
-    pub fn create<'a> (length: Option<i32>, link: &'a str, name: Option<&'a str>) -> Result<Track, String> {
+    pub fn create<'a>(length: Option<i32>, link: &'a str, name: Option<&'a str>) -> Result<Track, String> {
         match Track::new(length, link, name) {
             Ok(new_track) =>
                 match new_track.save() {
