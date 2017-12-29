@@ -17,7 +17,10 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     let user_email = &request_body.get("email").unwrap()[0];
     let user_password = &request_body.get("password").unwrap()[0];
 
-    let new_user = User::new(user_name, user_email, user_password);
+    let new_user = match User::new(user_name, user_email, user_password) {
+        Ok(user) => user,
+        Err(_) => return Ok(Response::with((status::InternalServerError, "Failed to instantiate user."))),
+    };
 
     match new_user.save() {
         Ok(saved_user) => Ok(Response::with((status::Created, users::create::render(&saved_user)))),

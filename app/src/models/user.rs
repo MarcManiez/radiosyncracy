@@ -38,15 +38,15 @@ pub enum Identifier<'a> {
 }
 
 impl User {
-    pub fn new<'a>(username: &'a str, email: &'a str, supplied_password: &'a str) -> NewUser<'a> {
+    pub fn new<'a>(username: &'a str, email: &'a str, supplied_password: &'a str) -> Result<NewUser<'a>, String> {
         let password_salt: String = thread_rng().gen_ascii_chars().take(10).collect();
         let password = User::hash_salted_password(supplied_password, &password_salt);
-        NewUser {
+        Ok(NewUser {
             username,
             email,
             password,
             password_salt
-        }
+        })
     }
 
     pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, diesel::result::Error> {
