@@ -39,6 +39,17 @@ impl Track {
             Err(String::from("Link is not a youtube URL."))
         }
     }
+
+    pub fn create<'a> (length: Option<i32>, link: &'a str, name: Option<&'a str>) -> Result<Track, String> {
+        match Track::new(length, link, name) {
+            Ok(new_track) =>
+                match new_track.save() {
+                    Ok(track) => Ok(track),
+                    Err(error) => Err(format!("Error saving track to database: {:?}", error))
+                }
+            Err(error) => Err(error)
+        }
+    }
 }
 
 impl<'a> NewTrack<'a> {
