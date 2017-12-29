@@ -41,12 +41,28 @@ impl User {
     pub fn new<'a>(username: &'a str, email: &'a str, supplied_password: &'a str) -> Result<NewUser<'a>, String> {
         let password_salt: String = thread_rng().gen_ascii_chars().take(10).collect();
         let password = User::hash_salted_password(supplied_password, &password_salt);
-        Ok(NewUser {
+        // Wrapping new_user in an option to comply with ::create's error handling
+        let new_user = Some(NewUser {
             username,
             email,
             password,
             password_salt
-        })
+        });
+        match new_user {
+            Some(user) => Ok(user),
+            None => Err(String::from("Failed to instantiate user.")),
+        }
+    }
+
+    pub fn create<'a>(username: &'a str, email: &'a str, supplied_password: &'a str) -> Result<User, String> {
+        match User::new(username, email, supplied_password) {
+            Ok(new_user) =>
+                match new_user.save() {
+                    Ok(user) => Ok(user),
+                    Err(error) => Err(format!("Error saving user to database: {:?}", error))
+                }
+            Err(error) => Err(error)
+        }
     }
 
     pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, diesel::result::Error> {
