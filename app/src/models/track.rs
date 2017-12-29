@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use diesel;
 use diesel::LoadDsl;
+use regex::Regex;
 
 use std::ops::Deref;
 
@@ -26,12 +27,18 @@ pub struct NewTrack<'a> {
 }
 
 impl Track {
-    pub fn new<'a>(length: Option<i32>, link: &'a str, name: Option<&'a str>) -> NewTrack<'a> {
-        NewTrack {
-            length,
-            link,
-            name
+    pub fn new<'a>(length: Option<i32>, link: &'a str, name: Option<&'a str>) -> Result<NewTrack<'a>, &'a str> {
+        let youtube_url_regex = Regex::new("https?:\x2F\x2F(w{3}\x2E)?youtu(be\x2Ecom|\x2Ebe)\x2F.+").expect("Failed to parse regex");
+        if youtube_url_regex.is_match(link) {
+            Ok(NewTrack {
+                length,
+                link,
+                name
+            })
+        } else {
+            Err("Link is not a youtube URL.")
         }
+
     }
 }
 

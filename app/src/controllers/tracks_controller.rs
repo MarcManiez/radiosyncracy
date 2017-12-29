@@ -23,7 +23,10 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         None => None,
     };
 
-    let new_track = Track::new(length, link, name);
+    let new_track = match Track::new(length, link, name) {
+        Ok(track) => track,
+        Err(error) => return Ok(Response::with((status::InternalServerError, error))),
+    };
 
     match new_track.save() {
         Ok(saved_track) => Ok(Response::with((status::Created, tracks::create::render(&saved_track)))),
