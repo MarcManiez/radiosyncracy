@@ -76,7 +76,7 @@ impl Track {
 
         match tracks::table.find(id).get_result(database_connection.deref()) {
             Ok(track) => Ok(track),
-            Err(error) => Err(format!("Error finding track : {:?}", error))
+            Err(error) => Err(format!("Error finding track: {:?}", error))
         }
     }
 
@@ -99,6 +99,15 @@ impl Track {
                     Err(error) => Err(format!("Error updating track: {:?}", error)),
                 }
             }
+        }
+    }
+
+    pub fn delete(id: i32) -> Result<Track, String> {
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+
+        match diesel::delete(tracks::table.find(id)).get_result(database_connection.deref()) {
+            Ok(track) => Ok(track),
+            Err(error) => Err(format!("Error deleting track: {:?}", error)),
         }
     }
 }
