@@ -9,6 +9,7 @@ use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::users;
+use super::utils::Deletable;
 
 #[derive(Debug, Deserialize, Queryable, Serialize)]
 pub struct User {
@@ -143,6 +144,15 @@ impl User {
     fn hash_salt_and_password(supplied_password: &str, password_salt: &str) -> String {
         let salted_password = format!("{}{}", password_salt, supplied_password);
         hash(&salted_password, DEFAULT_COST).expect("Failed to hash password.")
+    }
+}
+
+impl Deletable for User {
+    fn delete(&self) -> Result<User, String> {
+        match User::delete(self.id) {
+            Ok(deleted) => Ok(deleted),
+            Err(error) => Err(error),
+        }
     }
 }
 
