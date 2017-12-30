@@ -8,6 +8,7 @@ use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::tracks;
+use super::utils::Deletable;
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
 pub struct Track {
@@ -108,6 +109,15 @@ impl Track {
         match diesel::delete(tracks::table.find(id)).get_result(database_connection.deref()) {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error deleting track: {:?}", error)),
+        }
+    }
+}
+
+impl Deletable for Track {
+    fn delete(&self) -> Result<Track, String> {
+        match Track::delete(self.id) {
+            Ok(deleted) => Ok(deleted),
+            Err(error) => Err(error),
         }
     }
 }
