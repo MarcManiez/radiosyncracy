@@ -1,6 +1,6 @@
 use iron::prelude::*;
 use iron::status;
-use urlencoded::UrlEncodedBody;
+use urlencoded::{UrlEncodedBody, UrlEncodedQuery};
 
 use ::models::user::User;
 use super::utils::*;
@@ -21,4 +21,19 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
         Ok(user) => Ok(Response::with((status::Created, users::create::render(&user)))),
         Err(error) => Ok(Response::with((status::InternalServerError, error))),
     }
+}
+
+pub fn find(req: &mut Request) -> IronResult<Response> {
+    let request_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
+
+    if let Some(response) = require_params(request_params, vec!["id"]) {
+        return Ok(response)
+    }
+
+    let id = request_params.get("id").unwrap()[0].parse::<i32>().unwrap();
+    match User::find(id) {
+        Ok(user) => Ok(Response::with((status::Ok, users::find::render(&user)))),
+        Err(error) => Ok(Response::with((status::InternalServerError, error))),
+    }
+
 }
