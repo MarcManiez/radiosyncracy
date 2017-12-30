@@ -1,6 +1,6 @@
 use iron::prelude::*;
 use iron::status;
-use urlencoded::UrlEncodedBody;
+use urlencoded::{UrlEncodedBody, UrlEncodedQuery};
 
 use ::models::track::Track;
 use super::utils::*;
@@ -25,6 +25,21 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 
     match Track::create(length, link, name) {
         Ok(track) => Ok(Response::with((status::Created, tracks::create::render(&track)))),
+        Err(error) => Ok(Response::with((status::InternalServerError, error))),
+    }
+}
+
+pub fn delete(req: &mut Request) -> IronResult<Response> {
+    let request_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
+
+    if let Some(response) = require_params(request_params, vec!["id"]) {
+        return Ok(response)
+    }
+
+    let id = request_params.get("id").unwrap()[0].parse::<i32>().unwrap();
+
+    match Track::delete(id) {
+        Ok(track) => Ok(Response::with((status::Ok, tracks::delete::render(&track)))),
         Err(error) => Ok(Response::with((status::InternalServerError, error))),
     }
 }
