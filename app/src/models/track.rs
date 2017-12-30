@@ -82,24 +82,22 @@ impl Track {
     }
 
     pub fn update<'a>(&'a self, length: Option<i32>, link: Option<&'a str>, name: Option<&'a str>) -> Result<Track, String> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        if let Some(error) = Track::validate(length, link, name) {
+            return Err(format!("Error validating track: {}", error))
+        }
 
-        match Track::validate(length, link, name) {
-            Some(error) => Err(format!("Error validating track: {}", error)),
-            None => {
-                let updated_track = diesel::update(tracks::table.find(self.id))
-                    .set(&TrackUpdater {
-                        length,
-                        link,
-                        name,
-                        updated_at: Utc::now().naive_utc(),
-                    })
-                    .get_result(database_connection.deref());
-                match updated_track {
-                    Ok(track) => Ok(track),
-                    Err(error) => Err(format!("Error updating track: {:?}", error)),
-                }
-            }
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let updated_track = diesel::update(tracks::table.find(self.id))
+            .set(&TrackUpdater {
+                length,
+                link,
+                name,
+                updated_at: Utc::now().naive_utc(),
+            })
+            .get_result(database_connection.deref());
+        match updated_track {
+            Ok(track) => Ok(track),
+            Err(error) => Err(format!("Error updating track: {:?}", error)),
         }
     }
 
