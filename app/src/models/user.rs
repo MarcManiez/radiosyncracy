@@ -109,6 +109,15 @@ impl User {
         }
     }
 
+    pub fn delete(id: i32) -> Result<User, String> {
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+
+        match diesel::delete(users::table.find(id)).get_result(database_connection.deref()) {
+            Ok(user) => Ok(user),
+            Err(error) => Err(format!("Error deleting track: {:?}", error)),
+        }
+    }
+
     pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, diesel::result::Error> {
         use ::schema::users::dsl::*;
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
