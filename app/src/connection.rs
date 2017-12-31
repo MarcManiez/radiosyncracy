@@ -1,12 +1,14 @@
 extern crate r2d2;
 extern crate r2d2_diesel;
 
-use std::env;
-
 use diesel::PgConnection;
 use dotenv::dotenv;
 use self::r2d2::{Error, Pool, PooledConnection};
 use self::r2d2_diesel::ConnectionManager;
+
+use std::env;
+
+use ::environment::*;
 
 type Manager = ConnectionManager<PgConnection>;
 
@@ -27,9 +29,17 @@ impl ConnectionPool {
     fn instantiate_connection_pool(&mut self) {
         dotenv().ok();
 
-        let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+        let database_url = get_database_url().expect("Database url must be set");
         let manager = ConnectionManager::<PgConnection>::new(database_url);
         self.pool = Some(r2d2::Pool::builder().max_size(15).build(manager).expect("Failed to create connection pool."))
+    }
+}
+
+fn get_database_url() -> Result<String, env::VarError> {
+    if get() == TEST {
+        env::var("DATABASE_URL")
+    } else {
+        env::var("TEST_DATABASE_URL")
     }
 }
 
