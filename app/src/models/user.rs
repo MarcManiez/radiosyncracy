@@ -95,21 +95,22 @@ impl User {
         if let Some(error) = User::validate(username, email, supplied_password) {
             return Err(format!("Error validating user: {}", error))
         }
+
         let password;
         match supplied_password {
             Some(user_supplied_password) => password = Some(User::hash_salt_and_password(user_supplied_password, &self.password_salt)),
             None => password = None,
         }
+
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
-        let updated_user = diesel::update(users::table.find(self.id))
-            .set(&UserUpdater {
-                username,
-                email,
-                password: password.as_ref(),
-                updated_at: Utc::now().naive_utc(),
-            })
-            .get_result(database_connection.deref());
-        match updated_user {
+        let updated_user = UserUpdater {
+            username,
+            email,
+            password: password.as_ref(),
+            updated_at: Utc::now().naive_utc(),
+        };
+        let user_update_query = diesel::update(users::table.find(self.id)).set(&updated_user);
+        match print(user_update_query).get_result(database_connection.deref()) {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error updating user: {:?}", error)),
         }
@@ -118,7 +119,7 @@ impl User {
     pub fn delete(id: i32) -> Result<Option<User>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match diesel::delete(users::table.find(id)).get_result(database_connection.deref()).optional() {
+        match print(diesel::delete(users::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error deleting track: {:?}", error)),
         }
@@ -165,8 +166,6 @@ impl<'a> NewUser<'a> {
     pub fn save(&self) -> Result<User, result::Error> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        diesel::insert_into(users::table)
-            .values(self)
-            .get_result(database_connection.deref())
+        print(diesel::insert_into(users::table).values(self)).get_result(database_connection.deref())
     }
 }
