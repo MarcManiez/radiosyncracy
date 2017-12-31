@@ -74,7 +74,7 @@ impl Track {
     pub fn find(id: i32) -> Result<Option<Track>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match tracks::table.find(id).get_result(database_connection.deref()).optional() {
+        match print(tracks::table.find(id)).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error finding track: {:?}", error))
         }
@@ -91,16 +91,14 @@ impl Track {
         }
 
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
-        let updated_track = diesel::update(tracks::table.find(self.id))
-            .set(&TrackUpdater {
-                length,
-                link,
-                name,
-                updated_at: Utc::now().naive_utc(),
-            })
-            .get_result(database_connection.deref())
-            .optional();
-        match updated_track {
+        let updated_track = TrackUpdater {
+            length,
+            link,
+            name,
+            updated_at: Utc::now().naive_utc(),
+        };
+        let track_update_query = diesel::update(tracks::table.find(self.id)).set(&updated_track);
+        match print(track_update_query).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error updating track: {:?}", error)),
         }
@@ -129,8 +127,6 @@ impl<'a> NewTrack<'a> {
     pub fn save(&self) -> Result<Track, diesel::result::Error> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        diesel::insert_into(tracks::table)
-            .values(self)
-            .get_result(database_connection.deref())
+        print(diesel::insert_into(tracks::table).values(self)).get_result(database_connection.deref())
     }
 }
