@@ -71,16 +71,21 @@ impl Track {
         None
     }
 
-    pub fn find(id: i32) -> Result<Track, String> {
+    pub fn find(id: i32) -> Result<Option<Track>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match tracks::table.find(id).get_result(database_connection.deref()) {
+        match tracks::table.find(id).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error finding track: {:?}", error))
         }
     }
 
-    pub fn update<'a>(&'a self, length: Option<i32>, link: Option<&'a str>, name: Option<&'a str>) -> Result<Track, String> {
+    pub fn update<'a>(
+        &'a self,
+        length: Option<i32>,
+        link: Option<&'a str>,
+        name: Option<&'a str>
+    ) -> Result<Option<Track>, String> {
         if let Some(error) = Track::validate(length, link, name) {
             return Err(format!("Error validating track: {}", error))
         }
@@ -93,7 +98,8 @@ impl Track {
                 name,
                 updated_at: Utc::now().naive_utc(),
             })
-            .get_result(database_connection.deref());
+            .get_result(database_connection.deref())
+            .optional();
         match updated_track {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error updating track: {:?}", error)),
