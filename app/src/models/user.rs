@@ -91,7 +91,7 @@ impl User {
         username: Option<&'a str>,
         email: Option<&'a str>,
         supplied_password: Option<&'a str>
-    ) -> Result<Option<User>, String> {
+    ) -> Result<User, String> {
         if let Some(error) = User::validate(username, email, supplied_password) {
             return Err(format!("Error validating user: {}", error))
         }
@@ -108,8 +108,7 @@ impl User {
                 password: password.as_ref(),
                 updated_at: Utc::now().naive_utc(),
             })
-            .get_result(database_connection.deref())
-            .optional();
+            .get_result(database_connection.deref());
         match updated_user {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error updating user: {:?}", error)),

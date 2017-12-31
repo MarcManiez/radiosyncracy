@@ -85,7 +85,7 @@ impl Track {
         length: Option<i32>,
         link: Option<&'a str>,
         name: Option<&'a str>
-    ) -> Result<Option<Track>, String> {
+    ) -> Result<Track, String> {
         if let Some(error) = Track::validate(length, link, name) {
             return Err(format!("Error validating track: {}", error))
         }
@@ -98,7 +98,7 @@ impl Track {
             updated_at: Utc::now().naive_utc(),
         };
         let track_update_query = diesel::update(tracks::table.find(self.id)).set(&updated_track);
-        match print(track_update_query).get_result(database_connection.deref()).optional() {
+        match print(track_update_query).get_result(database_connection.deref()) {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error updating track: {:?}", error)),
         }
