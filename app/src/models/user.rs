@@ -77,16 +77,21 @@ impl User {
         }
     }
 
-    pub fn find(id: i32) -> Result<User, String> {
+    pub fn find(id: i32) -> Result<Option<User>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match print(users::table.find(id)).get_result(database_connection.deref()) {
+        match print(users::table.find(id)).get_result(database_connection.deref()).optional() {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error finding user: {:?}", error))
         }
     }
 
-    pub fn update<'a>(&'a self, username: Option<&'a str>, email: Option<&'a str>, supplied_password: Option<&'a str>) -> Result<User, String> {
+    pub fn update<'a>(
+        &'a self,
+        username: Option<&'a str>,
+        email: Option<&'a str>,
+        supplied_password: Option<&'a str>
+    ) -> Result<Option<User>, String> {
         if let Some(error) = User::validate(username, email, supplied_password) {
             return Err(format!("Error validating user: {}", error))
         }
@@ -103,7 +108,8 @@ impl User {
                 password: password.as_ref(),
                 updated_at: Utc::now().naive_utc(),
             })
-            .get_result(database_connection.deref());
+            .get_result(database_connection.deref())
+            .optional();
         match updated_user {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error updating user: {:?}", error)),
