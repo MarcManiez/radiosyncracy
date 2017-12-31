@@ -18,6 +18,7 @@ pub mod models;
 pub mod schema;
 pub mod views;
 mod api_routes;
+mod environment;
 mod connection;
 mod controllers;
 mod spec;
