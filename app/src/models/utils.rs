@@ -2,7 +2,7 @@ use diesel::query_builder;
 use diesel::pg::Pg;
 
 pub trait Deletable<T=Self> {
-    fn delete(&self) -> Result<T, String>;
+    fn delete(&self) -> Result<Option<T>, String>;
 }
 
 pub fn print<T>(query: T) -> T

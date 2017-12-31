@@ -2,7 +2,7 @@ use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::prelude::*;
 use diesel;
 use diesel::prelude::*;
-use diesel::result;
+use diesel::{OptionalExtension, result};
 use rand::{thread_rng, Rng};
 
 use std::ops::Deref;
@@ -110,10 +110,10 @@ impl User {
         }
     }
 
-    pub fn delete(id: i32) -> Result<User, String> {
+    pub fn delete(id: i32) -> Result<Option<User>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match diesel::delete(users::table.find(id)).get_result(database_connection.deref()) {
+        match diesel::delete(users::table.find(id)).get_result(database_connection.deref()).optional() {
             Ok(user) => Ok(user),
             Err(error) => Err(format!("Error deleting track: {:?}", error)),
         }
@@ -148,7 +148,7 @@ impl User {
 }
 
 impl Deletable for User {
-    fn delete(&self) -> Result<User, String> {
+    fn delete(&self) -> Result<Option<User>, String> {
         match User::delete(self.id) {
             Ok(deleted) => Ok(deleted),
             Err(error) => Err(error),

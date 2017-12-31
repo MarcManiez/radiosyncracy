@@ -1,14 +1,13 @@
 use chrono::prelude::*;
 use diesel;
-use diesel::FindDsl;
-use diesel::LoadDsl;
+use diesel::{FindDsl, LoadDsl, OptionalExtension};
 use regex::Regex;
 
 use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::tracks;
-use super::utils::Deletable;
+use super::utils::{Deletable, print};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
 pub struct Track {
@@ -101,10 +100,10 @@ impl Track {
         }
     }
 
-    pub fn delete(id: i32) -> Result<Track, String> {
+    pub fn delete(id: i32) -> Result<Option<Track>, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match diesel::delete(tracks::table.find(id)).get_result(database_connection.deref()) {
+        match print(diesel::delete(tracks::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),
             Err(error) => Err(format!("Error deleting track: {:?}", error)),
         }
@@ -112,7 +111,7 @@ impl Track {
 }
 
 impl Deletable for Track {
-    fn delete(&self) -> Result<Track, String> {
+    fn delete(&self) -> Result<Option<Track>, String> {
         match Track::delete(self.id) {
             Ok(deleted) => Ok(deleted),
             Err(error) => Err(error),
