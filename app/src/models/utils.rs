@@ -1,6 +1,8 @@
 use diesel::query_builder;
 use diesel::pg::Pg;
 
+// This trait allows objects to have convenient .delete instance methods in addition
+// to their .delete class method.
 pub trait Deletable<T=Self> {
     fn delete(&self) -> Result<Option<T>, String>;
 }
