@@ -20,6 +20,8 @@ pub mod views;
 mod api_routes;
 mod connection;
 mod controllers;
+mod spec;
+
 use iron::prelude::*;
 
 fn main() {
