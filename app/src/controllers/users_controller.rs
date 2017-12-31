@@ -32,7 +32,12 @@ pub fn find(req: &mut Request) -> IronResult<Response> {
 
     let id = request_params.get("id").unwrap()[0].parse::<i32>().unwrap();
     match User::find(id) {
-        Ok(user) => Ok(Response::with((status::Ok, users::find::render(&user)))),
+        Ok(user) => {
+            match user {
+                Some(found_user) => Ok(Response::with((status::Ok, users::find::render(&found_user)))),
+                None => Ok(Response::with((status::NotFound, "User was not found."))),
+            }
+        },
         Err(error) => Ok(Response::with((status::InternalServerError, error))),
     }
 
