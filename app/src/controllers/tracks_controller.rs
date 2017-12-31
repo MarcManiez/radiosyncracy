@@ -39,7 +39,12 @@ pub fn delete(req: &mut Request) -> IronResult<Response> {
     let id = request_params.get("id").unwrap()[0].parse::<i32>().unwrap();
 
     match Track::delete(id) {
-        Ok(track) => Ok(Response::with((status::Ok, tracks::delete::render(&track)))),
+        Ok(track) => {
+            match track {
+                Some(deleted_track) => Ok(Response::with((status::Ok, tracks::delete::render(&deleted_track)))),
+                None => Ok(Response::with((status::NotFound, "Track was not found."))),
+            }
+        },
         Err(error) => Ok(Response::with((status::InternalServerError, error))),
     }
 }
