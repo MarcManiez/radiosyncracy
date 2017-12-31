@@ -2,14 +2,14 @@ use bcrypt::{DEFAULT_COST, hash, verify};
 use chrono::prelude::*;
 use diesel;
 use diesel::prelude::*;
-use diesel::LoadDsl;
+use diesel::result;
 use rand::{thread_rng, Rng};
 
 use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::users;
-use super::utils::Deletable;
+use super::utils::{Deletable, print};
 
 #[derive(Debug, Deserialize, Queryable, Serialize)]
 pub struct User {
@@ -119,7 +119,7 @@ impl User {
         }
     }
 
-    pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, diesel::result::Error> {
+    pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, result::Error> {
         use ::schema::users::dsl::*;
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
@@ -135,7 +135,7 @@ impl User {
         if let Ok(ref found_user) = user {
             let salted_supplied_password = format!("{}{}", found_user.password_salt, supplied_password);
             if !verify(&salted_supplied_password, &found_user.password).unwrap() {
-                return Err(diesel::result::Error::NotFound)
+                return Err(result::Error::NotFound)
             }
         }
         user
@@ -157,7 +157,7 @@ impl Deletable for User {
 }
 
 impl<'a> NewUser<'a> {
-    pub fn save(&self) -> Result<User, diesel::result::Error> {
+    pub fn save(&self) -> Result<User, result::Error> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
         diesel::insert_into(users::table)
