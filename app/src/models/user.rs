@@ -80,9 +80,9 @@ impl User {
     pub fn find(id: i32) -> Result<User, String> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
 
-        match users::table.find(id).get_result(database_connection.deref()) {
+        match print(users::table.find(id)).get_result(database_connection.deref()) {
             Ok(user) => Ok(user),
-            Err(error) => Err(format!("Error finding user : {:?}", error))
+            Err(error) => Err(format!("Error finding user: {:?}", error))
         }
     }
 
