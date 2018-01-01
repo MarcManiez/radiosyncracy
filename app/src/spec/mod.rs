@@ -2,14 +2,7 @@ use diesel::Connection;
 
 use std::env;
 
-use ::connection::POOL;
-use ::environment::*;
-
-#[test]
-fn test() {
-
-}
-use ::connection::POOL;
+use ::connection::{DatabaseConnection, POOL};
 use ::environment::*;
 
 #[test]
@@ -17,10 +10,9 @@ fn test() {
 
 }
 
-pub fn truncate_all_tables() {
+fn truncate_all_tables(connection: &DatabaseConnection) {
     if get() != TEST { return; }
-    let database_connection = POOL.get().expect("Failed to fetch a connection.");
-    database_connection.execute(
+    connection.execute(
       "CREATE OR REPLACE FUNCTION truncate_tables(username IN VARCHAR) RETURNS void AS $$\n\
       DECLARE\n\
           statements CURSOR FOR\n\
@@ -34,6 +26,12 @@ pub fn truncate_all_tables() {
       $$ LANGUAGE plpgsql;"
     ).unwrap();
     let database_username = env::var("DATABASE_USERNAME").expect("Failed to load database username.");
-    database_connection.execute(&format!("SELECT truncate_tables('{}');", database_username)).unwrap();
+    connection.execute(&format!("SELECT truncate_tables('{}');", database_username)).unwrap();
+}
+
+pub fn prepare_test() {
+    let database_connection = POOL.get().expect("Failed to fetch a connection.");
+    truncate_all_tables(&database_connection);
+    database_connection.begin_test_transaction().unwrap();
 }
 
