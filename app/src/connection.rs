@@ -37,9 +37,9 @@ impl ConnectionPool {
 
 fn get_database_url() -> Result<String, env::VarError> {
     if get() == TEST {
-        env::var("DATABASE_URL")
-    } else {
         env::var("TEST_DATABASE_URL")
+    } else {
+        env::var("DATABASE_URL")
     }
 }
 
