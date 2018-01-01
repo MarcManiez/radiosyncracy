@@ -10,6 +10,7 @@ use std::env;
 use ::environment::*;
 
 type Manager = ConnectionManager<PgConnection>;
+pub type DatabaseConnection = PooledConnection<Manager>;
 
 pub const POOL: ConnectionPool = ConnectionPool { pool: None };
 
@@ -18,7 +19,7 @@ pub struct ConnectionPool {
 }
 
 impl ConnectionPool {
-    pub fn get(mut self) -> Result<PooledConnection<Manager>, Error> {
+    pub fn get(mut self) -> Result<DatabaseConnection, Error> {
         if let None = self.pool {
             self.instantiate_connection_pool();
         }
