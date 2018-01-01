@@ -23,9 +23,11 @@ mod connection;
 mod controllers;
 mod spec;
 
+use dotenv::dotenv;
 use iron::prelude::*;
 
 fn main() {
+    dotenv().ok();
     let routes = api_routes::get_routes();
 
     let _server = Iron::new(routes).http("localhost:3000").unwrap();
