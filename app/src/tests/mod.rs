@@ -5,6 +5,7 @@ use std::env;
 use ::connection::POOL;
 use ::environment::*;
 
+pub mod factories;
 mod models;
 
 pub fn truncate_all_tables() {
