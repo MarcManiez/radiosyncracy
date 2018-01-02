@@ -22,7 +22,6 @@ mod api_routes;
 mod environment;
 mod connection;
 mod controllers;
-mod spec;
 
 use dotenv::dotenv;
 use iron::prelude::*;
