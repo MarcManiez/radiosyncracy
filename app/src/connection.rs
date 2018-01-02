@@ -2,6 +2,7 @@ extern crate r2d2;
 extern crate r2d2_diesel;
 
 use diesel::PgConnection;
+use dotenv::dotenv;
 use self::r2d2::{Error, Pool, PooledConnection};
 use self::r2d2_diesel::ConnectionManager;
 
@@ -34,6 +35,7 @@ impl ConnectionPool {
 }
 
 fn get_database_url() -> Result<String, env::VarError> {
+    dotenv().ok();
     if get() == TEST {
         env::var("TEST_DATABASE_URL")
     } else {
