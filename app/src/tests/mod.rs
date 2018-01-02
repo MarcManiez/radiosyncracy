@@ -2,13 +2,14 @@ use diesel::Connection;
 
 use std::env;
 
-use ::connection::{DatabaseConnection, POOL};
+use ::connection::POOL;
 use ::environment::*;
 
 mod models;
 
-fn truncate_all_tables(connection: &DatabaseConnection) {
+pub fn truncate_all_tables() {
     if get() != TEST { return; }
+    let connection = POOL.get().expect("Failed to fetch a connection.");
     connection.execute(
       "CREATE OR REPLACE FUNCTION truncate_tables(username IN VARCHAR) RETURNS void AS $$\n\
       DECLARE\n\
