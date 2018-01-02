@@ -29,9 +29,3 @@ pub fn truncate_all_tables() {
     let database_username = env::var("DATABASE_USERNAME").expect("Failed to load database username.");
     connection.execute(&format!("SELECT truncate_tables('{}');", database_username)).unwrap();
 }
-
-pub fn describe(test: fn(connection: &DatabaseConnection) -> ()) {
-    let database_connection = POOL.get().expect("Failed to fetch a connection.");
-    truncate_all_tables(&database_connection);
-    test(&database_connection);
-}
