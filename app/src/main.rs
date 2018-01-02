@@ -14,6 +14,7 @@ extern crate serde;
 extern crate serde_json;
 extern crate urlencoded;
 
+#[cfg(test)] mod tests;
 pub mod models;
 pub mod schema;
 pub mod views;
