@@ -30,7 +30,7 @@ impl ConnectionPool {
     fn instantiate_connection_pool(&mut self) {
         let database_url = get_database_url().expect("Database url must be set");
         let manager = ConnectionManager::<PgConnection>::new(database_url);
-        self.pool = Some(r2d2::Pool::builder().max_size(15).build(manager).expect("Failed to create connection pool."))
+        self.pool = Some(r2d2::Pool::builder().max_size(15).build(manager).expect("Failed to create connection pool"))
     }
 }
 

@@ -72,7 +72,7 @@ impl Track {
     }
 
     pub fn find(id: i32) -> Result<Option<Track>, String> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         match print(tracks::table.find(id)).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),
@@ -90,7 +90,7 @@ impl Track {
             return Err(format!("Error validating track: {}", error))
         }
 
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
         let updated_track = TrackUpdater {
             length,
             link,
@@ -105,7 +105,7 @@ impl Track {
     }
 
     pub fn delete(id: i32) -> Result<Option<Track>, String> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         match print(diesel::delete(tracks::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(track) => Ok(track),

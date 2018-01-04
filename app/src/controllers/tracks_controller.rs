@@ -7,7 +7,7 @@ use super::utils::*;
 use ::views::api::tracks;
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
-    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
+    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params");
 
     if let Some(response) = require_params(request_body, vec!["link"]) {
         return Ok(response)
@@ -30,7 +30,7 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
 }
 
 pub fn delete(req: &mut Request) -> IronResult<Response> {
-    let request_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params.");
+    let request_params = req.get_ref::<UrlEncodedQuery>().expect("Failed to fetch query params");
 
     if let Some(response) = require_params(request_params, vec!["id"]) {
         return Ok(response)

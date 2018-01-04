@@ -26,6 +26,6 @@ pub fn truncate_all_tables() {
       END;\n\
       $$ LANGUAGE plpgsql;"
     ).unwrap();
-    let database_username = env::var("DATABASE_USERNAME").expect("Failed to load database username.");
+    let database_username = env::var("DATABASE_USERNAME").expect("Failed to load database username");
     connection.execute(&format!("SELECT truncate_tables('{}');", database_username)).unwrap();
 }

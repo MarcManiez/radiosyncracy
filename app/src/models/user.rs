@@ -78,7 +78,7 @@ impl User {
     }
 
     pub fn find(id: i32) -> Result<Option<User>, String> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         match print(users::table.find(id)).get_result(database_connection.deref()).optional() {
             Ok(user) => Ok(user),
@@ -102,7 +102,7 @@ impl User {
             None => password = None,
         }
 
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
         let updated_user = UserUpdater {
             username,
             email,
@@ -117,7 +117,7 @@ impl User {
     }
 
     pub fn delete(id: i32) -> Result<Option<User>, String> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         match print(diesel::delete(users::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(user) => Ok(user),
@@ -127,7 +127,7 @@ impl User {
 
     pub fn authenticate(identifier: Identifier, supplied_password: &str) -> Result<User, result::Error> {
         use ::schema::users::dsl::*;
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         let user = match identifier {
             Identifier::Email(submitted_email) => {
@@ -149,7 +149,7 @@ impl User {
 
     fn hash_salt_and_password(supplied_password: &str, password_salt: &str) -> String {
         let salted_password = format!("{}{}", password_salt, supplied_password);
-        hash(&salted_password, DEFAULT_COST).expect("Failed to hash password.")
+        hash(&salted_password, DEFAULT_COST).expect("Failed to hash password")
     }
 }
 
@@ -164,7 +164,7 @@ impl Deletable for User {
 
 impl<'a> NewUser<'a> {
     pub fn save(&self) -> Result<User, result::Error> {
-        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        let database_connection = POOL.get().expect("Failed to fetch a connection");
 
         print(diesel::insert_into(users::table).values(self)).get_result(database_connection.deref())
     }

@@ -9,7 +9,7 @@ use super::utils::*;
 use ::views::api::sessions::create;
 
 pub fn create(req: &mut Request) -> IronResult<Response> {
-    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params.");
+    let request_body = req.get_ref::<UrlEncodedBody>().expect("Failed to fetch query params");
 
     if let Some(response) = require_params(request_body, vec!["password"]) {
         return Ok(response)
