@@ -28,3 +28,21 @@ fn create() {
     assert_eq!(user.email, user_email);
 }
 
+#[test]
+fn update() {
+    truncate_all_tables();
+    let database_connection = POOL.get().expect("Failed to fetch a connection");
+    let user = create_basic_user();
+    let new_email = "great@email.friend";
+
+    let _updated_user = user.update(None, Some(new_email), None);
+    let updated_user = users::table.filter(users::email.eq(new_email)).get_result::<User>(database_connection.deref()).unwrap();
+
+    assert_eq!(user.id, updated_user.id);
+}
+
+// validations
+
+// delete
+
+// Authenticate
