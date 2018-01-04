@@ -41,8 +41,15 @@ fn update() {
     assert_eq!(user.id, updated_user.id);
 }
 
-// validations
+#[test]
+fn delete() {
+    truncate_all_tables();
+    let database_connection = POOL.get().expect("Failed to fetch a connection");
+    let user = create_basic_user();
+    let _deleted_user = User::delete(user.id).unwrap().unwrap();
+    let all_users = users::table.get_results::<User>(database_connection.deref()).unwrap();
 
-// delete
+    assert_eq!(all_users.len(), 0);
+}
 
 // Authenticate
