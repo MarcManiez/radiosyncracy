@@ -5,7 +5,7 @@ use ::tests::factories::user::*;
 #[test]
 fn find() {
     truncate_all_tables();
-    let user = create();
+    let user = create_basic_user();
     let found_user = User::find(user.id).unwrap().unwrap();
 
     assert_eq!(user.id, found_user.id);
