@@ -3,7 +3,7 @@ use diesel::prelude::*;
 use std::ops::Deref;
 
 use ::connection::POOL;
-use ::models::user::User;
+use ::models::user::{Identifier, User};
 use ::schema::users;
 use ::tests::truncate_all_tables;
 use ::tests::factories::user::*;
@@ -52,4 +52,11 @@ fn delete() {
     assert_eq!(all_users.len(), 0);
 }
 
-// Authenticate
+#[test]
+fn authenticate() {
+    truncate_all_tables();
+    let user = create_basic_user();
+    let authenticated_user = User::authenticate(Identifier::Email("valid@email.com"), "password").unwrap();
+
+    assert_eq!(user.id, authenticated_user.id);
+}
