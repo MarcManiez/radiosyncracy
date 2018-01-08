@@ -1,3 +1,4 @@
 .env
-app/target
 .vscode
+app/target
+client/Radiosyncracy.xcodeproj/xcuserdata
