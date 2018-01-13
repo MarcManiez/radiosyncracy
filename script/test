@@ -1,0 +1,2 @@
+#!/bin/bash
+cd app && ENV=test cargo test -- --test-threads=1 && cd ..
