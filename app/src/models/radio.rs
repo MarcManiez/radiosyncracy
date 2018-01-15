@@ -6,6 +6,7 @@ use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::radios;
+use super::user::User;
 use super::utils::{Deletable, print};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
@@ -120,6 +121,20 @@ impl Radio {
         match print(diesel::delete(radios::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(radio) => Ok(radio),
             Err(error) => Err(format!("Error deleting radio: {:?}", error)),
+        }
+    }
+
+    pub fn user(&self) -> Option<User> {
+        let user_id = match self.user_id {
+            Some(id) => id,
+            None => return None,
+        };
+        match User::find(user_id) {
+            Ok(optional_user) => optional_user,
+            Err(error) => {
+                println!("Error finding user: {:?}", error);
+                return None
+            }
         }
     }
 }
