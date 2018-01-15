@@ -46,7 +46,7 @@ fn delete() {
     truncate_all_tables();
     let database_connection = POOL.get().expect("Failed to fetch a connection");
     let track = create_basic_track();
-    let _deleted_user = Track::delete(track.id).unwrap().unwrap();
+    let _deleted_track = Track::delete(track.id).unwrap().unwrap();
     let all_tracks = tracks::table.get_results::<Track>(database_connection.deref()).unwrap();
 
     assert_eq!(all_tracks.len(), 0);

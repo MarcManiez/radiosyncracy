@@ -46,7 +46,7 @@ fn delete() {
     truncate_all_tables();
     let database_connection = POOL.get().expect("Failed to fetch a connection");
     let radio = create_basic_radio();
-    let _deleted_user = Radio::delete(radio.id).unwrap().unwrap();
+    let _deleted_radio = Radio::delete(radio.id).unwrap().unwrap();
     let all_radios = radios::table.get_results::<Radio>(database_connection.deref()).unwrap();
 
     assert_eq!(all_radios.len(), 0);
