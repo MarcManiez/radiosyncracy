@@ -51,3 +51,12 @@ fn delete() {
 
     assert_eq!(all_radios.len(), 0);
 }
+
+#[test]
+fn user() {
+    truncate_all_tables();
+    let (radio, user) = create_radio_with_user();
+    let found_user = radio.user().expect("Error getting user");
+
+    assert_eq!(user.username, found_user.username);
+}
