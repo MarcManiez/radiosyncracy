@@ -8,5 +8,6 @@ pub fn create_radio_track() -> (RadioTrack, Radio, Track) {
     let radio = create_basic_radio();
     let track = create_basic_track();
     let radio_track = RadioTrack::create(Some(track.id), Some(radio.id), Some(1)).unwrap();
+    let _ = radio.update(None, Some(1), None, Some(0));
     (radio_track, radio, track)
 }
