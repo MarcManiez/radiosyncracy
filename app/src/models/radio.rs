@@ -8,6 +8,7 @@ use ::connection::POOL;
 use ::schema::radio_tracks;
 use ::schema::radios;
 use super::radio_track::RadioTrack;
+use super::track::Track;
 use super::user::User;
 use super::utils::{Deletable, print};
 
@@ -138,6 +139,15 @@ impl Radio {
                 return None
             }
         }
+    }
+
+    pub fn add_track(&self, track: &Track) -> Result<RadioTrack, String> {
+        let track_count = match self.tracks() {
+            Some(radio_tracks) => radio_tracks.len(),
+            None => 0,
+        };
+        // A radio track gets inserted into last position on creation
+        RadioTrack::create(Some(track.id), Some(self.id), Some((track_count + 1) as i32))
     }
 
     pub fn tracks(&self) -> Option<Vec<RadioTrack>> {
