@@ -11,3 +11,7 @@ pub fn create_radio_track() -> (RadioTrack, Radio, Track) {
     let _ = radio.update(None, Some(1), None, Some(0));
     (radio_track, radio, track)
 }
+
+pub fn create_basic_radio_track() -> RadioTrack {
+    RadioTrack::create(None, None, None).unwrap()
+}
