@@ -7,6 +7,7 @@ use ::models::radio::Radio;
 use ::schema::radios;
 use ::tests::truncate_all_tables;
 use ::tests::factories::radio::*;
+use ::tests::factories::radio_track::*;
 
 #[test]
 fn find() {
@@ -59,4 +60,15 @@ fn user() {
     let found_user = radio.user().expect("Error getting user");
 
     assert_eq!(user.username, found_user.username);
+}
+
+#[test]
+fn tracks() {
+    truncate_all_tables();
+    let (first_radio_track, radio, track) = create_radio_track();
+    let second_radio_track = create_basic_radio_track();
+    let second_radio_track = second_radio_track.update(Some(radio.id), Some(track.id), Some(2)).expect("Error updating radio track");
+    let radio_tracks = radio.tracks().expect("Error fetching radio tracks");
+
+    assert_eq!(radio_tracks, vec![first_radio_track, second_radio_track]);
 }

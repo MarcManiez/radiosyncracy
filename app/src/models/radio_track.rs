@@ -8,7 +8,7 @@ use ::connection::POOL;
 use ::schema::radio_tracks;
 use super::utils::{Deletable, print};
 
-#[derive(AsChangeset, Debug, Deserialize, Identifiable, Queryable, Serialize)]
+#[derive(AsChangeset, Debug, Deserialize, Identifiable, PartialEq, Queryable, Serialize)]
 pub struct RadioTrack {
     pub id: i32,
     pub track_id: Option<i32>,

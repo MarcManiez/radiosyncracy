@@ -1,11 +1,13 @@
 use chrono::prelude::*;
 use diesel;
-use diesel::{FindDsl, LoadDsl, OptionalExtension};
+use diesel::{ExpressionMethods, FilterDsl, FindDsl, LoadDsl, OptionalExtension, OrderDsl};
 
 use std::ops::Deref;
 
 use ::connection::POOL;
+use ::schema::radio_tracks;
 use ::schema::radios;
+use super::radio_track::RadioTrack;
 use super::user::User;
 use super::utils::{Deletable, print};
 
@@ -136,6 +138,15 @@ impl Radio {
                 return None
             }
         }
+    }
+
+    pub fn tracks(&self) -> Option<Vec<RadioTrack>> {
+        let database_connection = POOL.get().expect("Failed to fetch a connection.");
+        radio_tracks::table.filter(radio_tracks::radio_id.eq(self.id))
+            .order(radio_tracks::track_order.asc())
+            .get_results(database_connection.deref())
+            .optional()
+            .expect("Failed to fetch radio tracks")
     }
 }
 
