@@ -29,6 +29,8 @@ pub struct NewRadioTrack {
 #[derive(AsChangeset, Debug)]
 #[table_name="radio_tracks"]
 struct RadioTrackUpdater {
+    pub track_id: Option<i32>,
+    pub radio_id: Option<i32>,
     pub track_order: Option<i32>,
     pub updated_at: NaiveDateTime,
 }
@@ -72,14 +74,16 @@ impl RadioTrack {
         }
     }
 
-    pub fn update<'a>(&'a self, track_order: i32) -> Result<RadioTrack, String> {
-        if let Some(error) = RadioTrack::validate(None, None, Some(track_order)) {
+    pub fn update<'a>(&'a self, track_id: Option<i32>, radio_id: Option<i32>, track_order: Option<i32>) -> Result<RadioTrack, String> {
+        if let Some(error) = RadioTrack::validate(track_id, radio_id, track_order) {
             return Err(format!("Error validating radio_track: {}", error))
         }
 
         let database_connection = POOL.get().expect("Failed to fetch a connection");
         let updated_radio_track = RadioTrackUpdater {
-            track_order: Some(track_order),
+            track_id,
+            radio_id,
+            track_order,
             updated_at: Utc::now().naive_utc(),
         };
         let radio_track_update_query = diesel::update(radio_tracks::table.find(self.id)).set(&updated_radio_track);

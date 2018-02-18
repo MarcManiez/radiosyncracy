@@ -35,7 +35,7 @@ fn update() {
     let (radio_track, _radio, _track) = create_radio_track();
     let track_order = 1;
 
-    let _updated_radio_track = radio_track.update(track_order);
+    let _updated_radio_track = radio_track.update(None, None, Some(track_order));
     let updated_radio_track = radio_tracks::table.filter(radio_tracks::track_order.eq(track_order)).get_result::<RadioTrack>(database_connection.deref()).unwrap();
 
     assert_eq!(radio_track.id, updated_radio_track.id);
