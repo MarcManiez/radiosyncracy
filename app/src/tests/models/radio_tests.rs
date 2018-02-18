@@ -8,6 +8,7 @@ use ::schema::radios;
 use ::tests::truncate_all_tables;
 use ::tests::factories::radio::*;
 use ::tests::factories::radio_track::*;
+use ::tests::factories::track::*;
 
 #[test]
 fn find() {
@@ -71,4 +72,16 @@ fn tracks() {
     let radio_tracks = radio.tracks().expect("Error fetching radio tracks");
 
     assert_eq!(radio_tracks, vec![first_radio_track, second_radio_track]);
+}
+
+#[test]
+fn add_track() {
+    truncate_all_tables();
+    let radio = create_basic_radio();
+    let track = create_basic_track();
+    let radio_track = radio.add_track(&track).expect("Error adding radio track");
+
+    assert_eq!(radio_track.track_order.unwrap(), 1);
+    assert_eq!(radio_track.track_id.unwrap(), track.id);
+    assert_eq!(radio_track.radio_id.unwrap(), radio.id);
 }
