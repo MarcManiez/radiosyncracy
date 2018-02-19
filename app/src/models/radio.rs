@@ -147,7 +147,16 @@ impl Radio {
             None => 0,
         };
         // A radio track gets inserted into last position on creation
-        RadioTrack::create(Some(track.id), Some(self.id), Some((track_count + 1) as i32))
+        match RadioTrack::create(Some(track.id), Some(self.id), Some((track_count + 1) as i32)) {
+            Ok(radio_track) => {
+                if track_count == 0 {
+                    // TODO: research how to wrap this in a transaction
+                    self.update(None, Some(1), None, None).expect("Error updating radio");
+    }
+                Ok(radio_track)
+            },
+            Err(error) => Err(error),
+        }
     }
 
     pub fn tracks(&self) -> Option<Vec<RadioTrack>> {
