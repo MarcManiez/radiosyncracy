@@ -85,3 +85,29 @@ fn add_track() {
     assert_eq!(radio_track.track_id.unwrap(), track.id);
     assert_eq!(radio_track.radio_id.unwrap(), radio.id);
 }
+
+#[test]
+
+fn current_track() {
+    truncate_all_tables();
+    let mut radio = create_basic_radio();
+    let track_1 = create_basic_track();
+    let track_2 = create_basic_track();
+    let track_3 = create_basic_track();
+    let _ = radio.add_track(&track_1).expect("Error adding radio track_1");
+    let radio_track2 = radio.add_track(&track_2).expect("Error adding radio track_2");
+    let _ = radio.add_track(&track_3).expect("Error adding radio track_3");
+    radio = radio.update(None, Some(2), None, None).expect("Error updating radio");
+    let current_radio_track = radio.current_track().expect("Error fetching current track");
+
+    assert_eq!(current_radio_track, radio_track2);
+}
+
+#[test]
+fn current_track_without_any_track_on_radio() {
+    truncate_all_tables();
+    let radio = create_basic_radio();
+    let current_radio_track = radio.current_track();
+
+    assert_eq!(current_radio_track, None);
+}
