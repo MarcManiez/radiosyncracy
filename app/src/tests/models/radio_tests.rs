@@ -34,10 +34,10 @@ fn create() {
 fn update() {
     truncate_all_tables();
     let database_connection = POOL.get().expect("Failed to fetch a connection");
-    let radio = create_basic_radio();
+    let mut radio = create_basic_radio();
     let radio_name = "Hits from the '70s";
 
-    let _updated_radio = radio.update(None, None, Some(radio_name), None);
+    radio = radio.update(None, None, Some(radio_name), None).expect("Error updating radio");
     let updated_radio = radios::table.filter(radios::name.eq(radio_name)).get_result::<Radio>(database_connection.deref()).unwrap();
 
     assert_eq!(radio.id, updated_radio.id);
