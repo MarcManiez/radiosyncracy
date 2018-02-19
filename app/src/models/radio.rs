@@ -167,6 +167,19 @@ impl Radio {
             .optional()
             .expect("Failed to fetch radio tracks")
     }
+
+    pub fn current_track(&self) -> Option<RadioTrack> {
+        let last_played_radio_track_number = match self.last_played_radio_track_number {
+            Some(current_track_number) => current_track_number,
+            None => return None,
+        };
+        match self.tracks() {
+            Some(radio_tracks) => {
+                radio_tracks.into_iter().find(|radio_track| radio_track.track_order == Some(last_played_radio_track_number))
+            },
+            None => None
+        }
+    }
 }
 
 impl Deletable for Radio {
