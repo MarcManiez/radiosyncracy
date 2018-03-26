@@ -6,7 +6,8 @@ use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::radio_tracks;
-use super::radio::Radio;
+use super::radio::{Radio};
+use super::track::{Track};
 use super::utils::{Deletable, print};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, PartialEq, Queryable, Serialize)]
@@ -106,6 +107,13 @@ impl RadioTrack {
     pub fn radio<'a>(&'a self) -> Option<Radio> {
         match self.radio_id {
             Some(radio_id) => Radio::find(radio_id).expect("Error retrieving radio"),
+            None => None,
+        }
+    }
+
+    pub fn track<'a>(&'a self) -> Option<Track> {
+        match self.track_id {
+            Some(track_id) => Track::find(track_id).expect("Error retrieving radio"),
             None => None,
         }
     }
