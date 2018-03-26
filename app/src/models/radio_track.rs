@@ -6,6 +6,7 @@ use std::ops::Deref;
 
 use ::connection::POOL;
 use ::schema::radio_tracks;
+use super::radio::Radio;
 use super::utils::{Deletable, print};
 
 #[derive(AsChangeset, Debug, Deserialize, Identifiable, PartialEq, Queryable, Serialize)]
@@ -99,6 +100,13 @@ impl RadioTrack {
         match print(diesel::delete(radio_tracks::table.find(id))).get_result(database_connection.deref()).optional() {
             Ok(radio_track) => Ok(radio_track),
             Err(error) => Err(format!("Error deleting radio_track: {:?}", error)),
+        }
+    }
+
+    pub fn radio<'a>(&'a self) -> Option<Radio> {
+        match self.radio_id {
+            Some(radio_id) => Radio::find(radio_id).expect("Error retrieving radio"),
+            None => None,
         }
     }
 }
