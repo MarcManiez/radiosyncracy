@@ -152,7 +152,7 @@ impl Radio {
                 if track_count == 0 {
                     // TODO: research how to wrap this in a transaction
                     self.update(None, Some(1), None, None).expect("Error updating radio");
-    }
+                }
                 Ok(radio_track)
             },
             Err(error) => Err(error),
@@ -161,8 +161,7 @@ impl Radio {
 
     pub fn tracks(&self) -> Option<Vec<RadioTrack>> {
         let database_connection = POOL.get().expect("Failed to fetch a connection.");
-        radio_tracks::table.filter(radio_tracks::radio_id.eq(self.id))
-            .order(radio_tracks::track_order.asc())
+        print(radio_tracks::table.filter(radio_tracks::radio_id.eq(self.id)).order(radio_tracks::track_order.asc()))
             .get_results(database_connection.deref())
             .optional()
             .expect("Failed to fetch radio tracks")
