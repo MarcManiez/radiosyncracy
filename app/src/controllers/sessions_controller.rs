@@ -16,15 +16,14 @@ pub fn create(req: &mut Request) -> IronResult<Response> {
     }
     let supplied_password = &request_body.get("password").unwrap()[0];
 
-    let identifier: Identifier;
-    if let Some(username) = request_body.get("username") {
-        identifier = Identifier::Username(&username[0]);
+    let identifier = if let Some(username) = request_body.get("username") {
+        Identifier::Username(&username[0])
     } else {
         match request_body.get("email") {
-            Some(email) => identifier = Identifier::Email(&email[0]),
+            Some(email) => Identifier::Email(&email[0]),
             None => return Ok(Response::with((status::UnprocessableEntity, format!("Identifier parameter was absent")))),
         }
-    }
+    };
 
     match User::authenticate(identifier, supplied_password) {
         Ok(user) => {
